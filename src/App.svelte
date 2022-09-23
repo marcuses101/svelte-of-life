@@ -2,8 +2,8 @@
   import Cell from "./lib/Cell.svelte";
   import { calculateNextState } from "./lib/calculateNextState";
   const max = 100;
-  let numberOfRows = 25;
-  let numberOfColumns = 25;
+  let numberOfRows = 40;
+  let numberOfColumns = 90;
   let isPlaying = false;
   let interval = null;
   let cells = [...Array(numberOfRows * numberOfColumns)].map((_) => false);
@@ -60,18 +60,18 @@
       {max}
       step="1"
     />
-    <span>{numberOfColumns}</span>
+    <span>{numberOfRows}</span>
     <label for="column">Columns</label>
     <input
-      type="range"
-      id="columns"
-      bind:value={numberOfColumns}
-      on:change={populateCells}
-      min="10"
-      {max}
-      step="1"
+    type="range"
+    id="columns"
+    bind:value={numberOfColumns}
+    on:change={populateCells}
+    min="10"
+    {max}
+    step="1"
     />
-    <span>{numberOfRows}</span>
+    <span>{numberOfColumns}</span>
   </section>
   <section class="buttons">
     <button on:click={tick}>Next State</button>
@@ -95,14 +95,28 @@
 </main>
 
 <style>
-  button {
-    border: 1px solid black;
-    margin-block: 1rem;
-  }
   main {
     --columns: 50;
     --rows: 50;
     --cell_size: 15px;
+    --gradient: linear-gradient(130deg, #a1179b, #319197 76.05%, #23d5ab);
+  }
+  h1 {
+    background: -webkit-linear-gradient(290deg, #a1179b, #319197 76.05%, #23d5ab);
+    -webkit-text-fill-color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+    background-size: 200% 200%;
+    animation: gradient 15s ease infinite;
+  }
+
+  button {
+    background: rgb(85, 83, 83);
+    box-shadow: 2px 2px  #319197;
+    color: white;
+    font-size: 1.2rem;
+    border: 1px solid black;
+    margin-block: 1rem;
   }
   .controls {
     display: grid;
@@ -118,7 +132,7 @@
     border-radius: 0.5rem;
     overflow: hidden;
     box-shadow: 5px 5px 10px hsla(0, 0%, 100%, 0.2);
-    background: linear-gradient(130deg, #a1179b, #319197 76.05%, #23d5ab);
+    background: var(--gradient);
     background-size: 200% 200%;
     animation: gradient 15s ease infinite;
     width: fit-content;
