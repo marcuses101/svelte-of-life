@@ -82,7 +82,7 @@
     >
   </section>
 
-  <div class="grid" style="--columns:{numberOfColumns};--rows:{numberOfRows}">
+  <div class="grid" style="--columns:{numberOfColumns};--rows:{numberOfRows};">
     {#each cells as isOn, i}
       <Cell
         on:click={() => {
@@ -102,7 +102,7 @@
   main {
     --columns: 50;
     --rows: 50;
-    --cell_size: 10px;
+    --cell_size: 15px;
   }
   .controls {
     display: grid;
@@ -117,18 +117,27 @@
     ); */
     border-radius: 0.5rem;
     overflow: hidden;
-    box-shadow: 5px 5px 5px hsla(0, 0%, 0%, 0.5);
-    background: linear-gradient(
-      130deg,
-      #d4681a,
-      #b12649 41.07%,
-      #319197 76.05%
-    );
+    box-shadow: 5px 5px 10px hsla(0, 0%, 100%, 0.2);
+    background: linear-gradient(130deg, #a1179b, #319197 76.05%, #23d5ab);
+    background-size: 200% 200%;
+    animation: gradient 15s ease infinite;
     width: fit-content;
     margin-inline: auto;
     display: grid;
     gap: 1px;
     grid-template-columns: repeat(var(--columns), var(--cell_size));
     grid-template-rows: repeat(var(--rows), var(--cell_size));
+  }
+
+  @keyframes gradient {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
   }
 </style>

@@ -17,7 +17,7 @@
   .on {
     mix-blend-mode: saturation;
     /* background: linear-gradient(-45deg, black, hsla(0, 0%, 0%, 0.5)); */
-    background-color: hsl(var(--hue), 75%, 50%);
+    background-color: hsl(var(--hue), 100%, 50%);
   }
   :not(.on) {
     background: hsla(0, 0%, 0%, 0.2);
