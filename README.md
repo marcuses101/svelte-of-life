@@ -1,6 +1,6 @@
 # Svelte Conway's Game of Life
 
-![website screenshot](https://github.com/marcuses101/svelte-of-live/blob/main/image.png?raw=true)
+![website screenshot](https://raw.githubusercontent.com/marcuses101/svelte-of-life/main/image.png)
 
 ## Rules
 
