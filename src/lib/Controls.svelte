@@ -13,6 +13,21 @@
 
 <section class="controls">
   <article class="range">
+    <label for="column">Columns</label>
+    <input
+      type="range"
+      id="columns"
+      on:change={() => {
+        resizeCallback();
+      }}
+      bind:value={columnValue}
+      min={columnControl.min}
+      max={columnControl.max}
+      step="1"
+    />
+    <span>{columnValue}</span>
+  </article>
+  <article class="range">
     <label for="rows">Rows </label>
     <input
       type="range"
@@ -26,20 +41,6 @@
       step="1"
     />
     <span>{rowValue}</span>
-  </article>
-  <article class="range">
-    <label for="column">Columns</label>
-    <input
-      type="range"
-      id="columns"
-      on:change={() => {
-        resizeCallback();
-      }}
-      bind:value={columnValue}
-      min={columnControl.min}
-      step="1"
-    />
-    <span>{columnValue}</span>
   </article>
   <section class="buttons">
     <button on:click={tick}>Next State</button>

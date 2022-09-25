@@ -1,11 +1,13 @@
 <script lang="ts">
-  export let isOn;
+  export let isOn: boolean;
 </script>
 
 <div
   on:mousedown
   on:mouseenter
   on:mouseup
+  on:touchstart
+  on:touchend
   class:on={isOn}
   on:drag|preventDefault
   on:dragstart|preventDefault
