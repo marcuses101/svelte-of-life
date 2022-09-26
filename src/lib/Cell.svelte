@@ -3,11 +3,9 @@
 </script>
 
 <div
-  on:mousedown
-  on:mouseenter
-  on:mouseup
-  on:touchstart
-  on:touchend
+  on:pointerdown
+  on:pointerenter
+  on:pointerup
   class:on={isOn}
   on:drag|preventDefault
   on:dragstart|preventDefault

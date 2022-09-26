@@ -1,29 +1,10 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  import Grid from "./lib/Grid.svelte";
-  const cellSize = 15;
-  let isLoading = true;
-  let maxColumns = 10;
-  let maxRows = 40;
-
-  onMount(() => {
-    const sizeOfOneRem = parseFloat(
-      getComputedStyle(document.documentElement).fontSize
-    );
-    const maxWidth = window.innerWidth - 4 * sizeOfOneRem;
-    maxColumns = Math.floor(maxWidth / (cellSize + 1));
-    console.log({ maxWidth, maxColumns });
-    isLoading = false;
-  });
+  import GameOfLife from "./lib/GameOfLife.svelte";
 </script>
 
 <main>
   <h1>Game of Life</h1>
-  {#if isLoading}
-    <h2>Loading</h2>
-  {:else}
-    <Grid {maxColumns} {maxRows} />
-  {/if}
+  <GameOfLife />
 </main>
 
 <style>
@@ -31,6 +12,8 @@
     display: grid;
     grid-template-rows: auto 1fr;
     height: 100vh;
+    width: 95vw;
+    overflow: hidden;
   }
   h1 {
     padding-top: 1rem;

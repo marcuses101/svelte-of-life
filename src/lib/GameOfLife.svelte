@@ -2,8 +2,9 @@
   import Cell from "./Cell.svelte";
   import { calculateNextState } from "./calculateNextState";
   import Controls from "./Controls.svelte";
-  import { onMount } from "svelte";
-  export let maxRows: number = 10;
+  import { onDestroy, onMount } from "svelte";
+  const cellSize = 15;
+  let maxRows: number = 10;
   $: rowControl = { min: 4, max: maxRows };
   let numberOfRows = 50;
   export let maxColumns: number = 10;
@@ -19,12 +20,31 @@
     : editMode === "fill"
     ? "cell"
     : "crosshair";
+  let availableWidth = 0;
+  let availableHeight = 0;
+  let gridZoneRef: HTMLElement | null = null;
+  let resizeObserver = new ResizeObserver(() => {
+    updateDimentions();
+  });
+  function updateDimentions() {
+    maxColumns = Math.floor(availableWidth / (cellSize + 1));
+    maxRows = Math.floor(availableHeight / (cellSize + 1));
+    numberOfRows = maxRows;
+    numberOfColumns = maxColumns;
+    reset();
+  }
 
   onMount(() => {
-    console.log({ rowControl, columnControl });
-    numberOfColumns = columnControl.max;
-    numberOfRows = rowControl.max;
-    reset();
+    if (gridZoneRef !== null) {
+      resizeObserver.observe(gridZoneRef);
+    }
+  });
+  onDestroy(() => {
+    resizeObserver.disconnect();
+    if (interval) {
+      clearInterval(interval);
+      interval = null;
+    }
   });
 
   function play() {
@@ -77,6 +97,14 @@
     if (isPaused) return;
     cells = calculateNextState(cells, numberOfRows, numberOfColumns);
   }
+  function pointerDown(e: PointerEvent, i: number, isOn: boolean) {
+    isPaused = true;
+    editMode = isOn ? "clear" : "fill";
+    onCellClick(i, isOn);
+    if (e.target === null) return;
+    const target = e.target as Element;
+    target.releasePointerCapture(e.pointerId);
+  }
 </script>
 
 <section>
@@ -87,78 +115,78 @@
     {columnControl}
     {playPause}
     {random}
-    {tick}
+    tick={() => {
+      stop();
+      tick();
+    }}
     {reset}
     resizeCallback={() => {
       reset();
     }}
     isPlaying={Boolean(interval)}
   />
-  <div
-    on:drag|preventDefault
-    on:dragstart|preventDefault
-    on:mousedown={() => {
-      isPressed = true;
-    }}
-    on:touchstart={() => {
-      isPressed = true;
-    }}
-    on:mouseup={() => {
-      isPressed = false;
-    }}
-    on:touchend={() => {
-      isPressed = false;
-    }}
-    on:mouseleave={() => {
-      isPressed = false;
-      isPaused = false;
-    }}
-    on:touchcancel={() => {
-      isPressed = false;
-      isPaused = false;
-    }}
-    class="grid"
-    style="--columns:{numberOfColumns};--rows:{numberOfRows};--cursor:{cursor}"
+  <article
+    bind:this={gridZoneRef}
+    class="grid-zone"
+    bind:clientWidth={availableWidth}
+    bind:clientHeight={availableHeight}
   >
-    {#each cells as isOn, i}
-      <Cell
-        on:mousedown={() => {
-          isPaused = true;
-          editMode = isOn ? "clear" : "fill";
-          onCellClick(i, isOn);
-        }}
-        on:mouseup={() => {
-          isPaused = false;
-          isPressed = false;
-        }}
-        on:touchend={() => {
-          isPaused = false;
-          isPressed = false;
-        }}
-        on:mouseenter={() => {
-          onCellEnter(i, isOn);
-        }}
-        on:touchstart={() => {
-          if (!isPressed) {
-            isPressed = true;
-            editMode = isOn ? "clear" : "fill";
-          }
-          onCellClick(i, isOn);
-        }}
-        {isOn}
-      />
-    {/each}
-  </div>
+    <div
+      on:drag|preventDefault
+      on:dragstart|preventDefault
+      on:pointerdown|preventDefault={() => {
+        isPressed = true;
+      }}
+      on:pointerup|preventDefault={() => {
+        isPressed = false;
+      }}
+      on:pointerleave|preventDefault={() => {
+        isPressed = false;
+        isPaused = false;
+      }}
+      class="grid"
+      style="--columns:{numberOfColumns};--rows:{numberOfRows};--cursor:{cursor}"
+    >
+      {#each cells as isOn, i}
+        <Cell
+          on:pointerdown={(e) => {
+            pointerDown(e, i, isOn);
+          }}
+          on:pointerup={() => {
+            isPaused = false;
+            isPressed = false;
+          }}
+          on:pointerenter={() => {
+            onCellEnter(i, isOn);
+          }}
+          {isOn}
+        />
+      {/each}
+    </div>
+  </article>
 </section>
 
 <style>
+  section {
+    flex-direction: column;
+    display: flex;
+    gap: 1rem;
+    overflow: hidden;
+    padding-bottom: 2rem;
+  }
+  .grid-zone {
+    flex: 1;
+    display: flex;
+    overflow-y: hidden;
+    place-items: center;
+  }
   .grid {
     --cursor: pointer;
     --cell-size: 15px;
+    touch-action: none;
     cursor: var(--cursor);
     border-radius: 0.5rem;
     overflow: hidden;
-    box-shadow: 5px 5px 10px hsla(0, 0%, 100%, 0.2);
     background: var(--gradient);
     background-size: 200% 200%;
     animation: gradient 15s ease infinite;

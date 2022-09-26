@@ -64,7 +64,6 @@
     gap: 0.5rem;
     justify-content: center;
     flex-wrap: wrap;
-    margin-bottom: 2rem;
   }
   button {
     background-color: rgb(85, 83, 83);

@@ -1,4 +1,4 @@
-function getNeighbors(index, numberOfColumns) {
+function getNeighbors(index: number, numberOfColumns: number) {
   const rowIndex = Math.floor(index / numberOfColumns);
   const columnIndex = index % numberOfColumns;
   const coordinates: Record<string, [number, number]> = {
@@ -14,21 +14,39 @@ function getNeighbors(index, numberOfColumns) {
   return coordinates;
 }
 
-function getIndex(rowIndex, columnIndex, numberOfColumns) {
+function getIndex(
+  rowIndex: number,
+  columnIndex: number,
+  numberOfColumns: number
+) {
   return rowIndex * numberOfColumns + columnIndex;
 }
 
-function countNeighbors({currentIndex, currentCells, numberOfColumns, numberOfRows}): number {
+function countNeighbors({
+  currentIndex,
+  currentCells,
+  numberOfColumns,
+  numberOfRows,
+}: {
+  currentIndex: number;
+  currentCells: (1 | 0)[];
+  numberOfColumns: number;
+  numberOfRows: number;
+}): number {
   const coordinates = getNeighbors(currentIndex, numberOfColumns);
-  const indexes = Object.values(coordinates)
-    .filter(([row, column]) => {
-      const rowValid = 0 <= row && row < numberOfRows;
-      const columnValid = 0 <= column && column < numberOfColumns;
-      return rowValid && columnValid;
-    })
-    .map(([row, column]) => getIndex(row, column, numberOfColumns));
-  const count = indexes.reduce(
-    (acc, currentIndex) => acc + (currentCells[currentIndex] ? 1 : 0),
+  const count = Object.values(coordinates).reduce(
+    (acc, [rowCoordinate, columnCoordinate]) => {
+      const rowValid = 0 <= rowCoordinate && rowCoordinate < numberOfRows;
+      const columnValid =
+        0 <= columnCoordinate && columnCoordinate <= numberOfColumns;
+      if (!rowValid || !columnValid) return acc;
+      const cellIndex = getIndex(
+        rowCoordinate,
+        columnCoordinate,
+        numberOfColumns
+      );
+      return acc + currentCells[cellIndex];
+    },
     0
   );
   return count;
@@ -39,10 +57,16 @@ export function calculateNextState(
   numberOfRows: number,
   numberOfColumns: number
 ) {
+  const cellsInBits = currentCells.map((bool) => (bool ? 1 : 0));
   const newState = currentCells.map((bool, currentIndex) => {
-    const numberOfNeighbors = countNeighbors({currentCells, currentIndex, numberOfColumns, numberOfRows});
+    const numberOfNeighbors = countNeighbors({
+      currentCells: cellsInBits,
+      currentIndex,
+      numberOfColumns,
+      numberOfRows,
+    });
     if (bool) return numberOfNeighbors === 2 || numberOfNeighbors === 3;
-    return numberOfNeighbors === 3
+    return numberOfNeighbors === 3;
   });
-  return newState
+  return newState;
 }
