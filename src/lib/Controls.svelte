@@ -66,6 +66,7 @@
     flex-wrap: wrap;
   }
   button {
+    width: 140px;
     background-color: rgb(85, 83, 83);
     /* box-shadow: 2px 2px #319197; */
     color: white;
