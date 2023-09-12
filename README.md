@@ -2,7 +2,7 @@
 
 [**Live Site**](https://marcuses101.github.io/svelte-of-life/)  
 <a href="https://marcuses101.github.io/svelte-of-life">
-![website screenshot](https://raw.githubusercontent.com/marcuses101/svelte-of-life/main/image.png)
+![website screenshot](https://raw.githubusercontent.com/marcuses101/svelte-of-life/main/svelte-of-life_screen.png)
 </a>
 
 ## Rules
