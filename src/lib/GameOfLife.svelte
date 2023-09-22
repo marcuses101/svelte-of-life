@@ -47,6 +47,8 @@
         numberOfRows = maxRows;
         numberOfColumns = maxColumns;
         reset();
+        random();
+        play();
     });
 
     onDestroy(() => {
@@ -137,6 +139,7 @@
         }}
         isPlaying={Boolean(tickInterval)}
     />
+    <i>Hint! Try clicking/dragging on the grid</i>
     <article
         class="grid-zone"
         bind:clientWidth={gridWidth}
