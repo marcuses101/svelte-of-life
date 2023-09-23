@@ -125,15 +125,15 @@
     <Controls
         bind:rowValue={numberOfRows}
         bind:columnValue={numberOfColumns}
-        {rowControl}
-        {columnControl}
-        {playPause}
-        {random}
-        tick={() => {
+        on:next={() => {
             stop();
             tick();
         }}
-        {reset}
+        on:playPause={playPause}
+        on:random={random}
+        on:reset={reset}
+        {rowControl}
+        {columnControl}
         resizeCallback={() => {
             reset();
         }}
@@ -198,28 +198,16 @@
         --cursor: pointer;
         touch-action: none;
         cursor: var(--cursor);
-        border-radius: 0.5rem;
+        border-radius: var(--br);
         overflow: hidden;
         background: var(--gradient);
         background-size: 200% 200%;
-        animation: gradient 15s ease infinite;
+        animation: var(--gradient-animation);
         width: fit-content;
         margin-inline: auto;
         display: grid;
         gap: 1px;
         grid-template-columns: repeat(var(--columns), var(--cell-size));
         grid-template-rows: repeat(var(--rows), var(--cell-size));
-    }
-
-    @keyframes gradient {
-        0% {
-            background-position: 0% 50%;
-        }
-        50% {
-            background-position: 100% 50%;
-        }
-        100% {
-            background-position: 0% 50%;
-        }
     }
 </style>
