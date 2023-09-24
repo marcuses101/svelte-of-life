@@ -1,17 +1,17 @@
 <script lang="ts">
     import Cell from "./Cell.svelte";
-    import { calculateNextState } from "./calculateNextState";
     import Controls from "./Controls.svelte";
+    import { calculateNextState } from "./calculateNextState";
     import { onDestroy, onMount } from "svelte";
 
     const CELL_SIZE_IN_PIXELS = 15;
+    const STATE_CHANGE_INTERVAL = 100;
 
     let gridWidth = 0;
     let numberOfColumns = 0;
     $: maxColumns = Math.floor(gridWidth / (CELL_SIZE_IN_PIXELS + 1));
     $: columnControl = { min: 4, max: maxColumns };
     $: {
-        console.log("update columns");
         if (numberOfColumns > maxColumns) {
             numberOfColumns = maxColumns;
             reset();
@@ -23,7 +23,6 @@
     $: maxRows = Math.floor(gridHeight / (CELL_SIZE_IN_PIXELS + 1));
     $: rowControl = { min: 4, max: maxRows };
     $: {
-        console.log("update rows");
         if (numberOfRows > maxRows) {
             numberOfRows = maxRows;
             reset();
@@ -63,7 +62,7 @@
         if (!tickInterval) {
             tickInterval = setInterval(() => {
                 tick();
-            }, 100);
+            }, STATE_CHANGE_INTERVAL);
         }
     }
     function stop() {

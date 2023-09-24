@@ -1,16 +1,28 @@
-function getNeighbors(index: number, numberOfColumns: number) {
+function getNeighbors(
+  index: number,
+  numberOfRows: number,
+  numberOfColumns: number
+) {
   const rowIndex = Math.floor(index / numberOfColumns);
   const columnIndex = index % numberOfColumns;
-  const coordinates: Record<string, [number, number]> = {
-    top: [rowIndex - 1, columnIndex],
-    topRight: [rowIndex - 1, columnIndex + 1],
-    right: [rowIndex, columnIndex + 1],
-    bottomRight: [rowIndex + 1, columnIndex + 1],
-    bottom: [rowIndex + 1, columnIndex],
-    bottomLeft: [rowIndex + 1, columnIndex - 1],
-    left: [rowIndex, columnIndex - 1],
-    topLeft: [rowIndex - 1, columnIndex - 1],
-  };
+
+  const topRowIndex = rowIndex === 0 ? numberOfRows - 1 : rowIndex - 1;
+  const bottomRowIndex = rowIndex === numberOfRows - 1 ? 0 : rowIndex + 1;
+  const leftColumnIndex =
+    columnIndex === 0 ? numberOfColumns - 1 : columnIndex - 1;
+  const rightColumnIndex =
+    columnIndex === numberOfColumns - 1 ? 0 : columnIndex + 1;
+
+  const coordinates: [number, number][] = [
+    [topRowIndex, columnIndex],
+    [topRowIndex, rightColumnIndex],
+    [rowIndex, rightColumnIndex],
+    [bottomRowIndex, rightColumnIndex],
+    [bottomRowIndex, columnIndex],
+    [bottomRowIndex, leftColumnIndex],
+    [rowIndex, leftColumnIndex],
+    [topRowIndex, leftColumnIndex],
+  ];
   return coordinates;
 }
 
@@ -29,26 +41,19 @@ function countNeighbors({
   numberOfRows,
 }: {
   currentIndex: number;
-  currentCells: (1 | 0)[];
+  currentCells: boolean[];
   numberOfColumns: number;
   numberOfRows: number;
 }): number {
-  const coordinates = getNeighbors(currentIndex, numberOfColumns);
-  const count = Object.values(coordinates).reduce(
-    (acc, [rowCoordinate, columnCoordinate]) => {
-      const rowValid = 0 <= rowCoordinate && rowCoordinate < numberOfRows;
-      const columnValid =
-        0 <= columnCoordinate && columnCoordinate <= numberOfColumns;
-      if (!rowValid || !columnValid) return acc;
-      const cellIndex = getIndex(
-        rowCoordinate,
-        columnCoordinate,
-        numberOfColumns
-      );
-      return acc + currentCells[cellIndex];
-    },
-    0
-  );
+  const coordinates = getNeighbors(currentIndex, numberOfRows, numberOfColumns);
+  const count = coordinates.reduce((acc, [rowCoordinate, columnCoordinate]) => {
+    const cellIndex = getIndex(
+      rowCoordinate,
+      columnCoordinate,
+      numberOfColumns
+    );
+    return acc + (currentCells[cellIndex] ? 1 : 0);
+  }, 0);
   return count;
 }
 
@@ -57,10 +62,9 @@ export function calculateNextState(
   numberOfRows: number,
   numberOfColumns: number
 ) {
-  const cellsInBits = currentCells.map((bool) => (bool ? 1 : 0));
   const newState = currentCells.map((bool, currentIndex) => {
     const numberOfNeighbors = countNeighbors({
-      currentCells: cellsInBits,
+      currentCells,
       currentIndex,
       numberOfColumns,
       numberOfRows,
